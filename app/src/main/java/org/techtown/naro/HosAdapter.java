@@ -60,13 +60,13 @@ public class HosAdapter extends RecyclerView.Adapter<HosAdapter.ViewHolder> {
                 tel = info.get(pos).getTel();
                 onoff = info.get(pos).getHosonoff();
 
+                //아이템 누르면 다음 액티비티로 넘어가는 데이터들
                 Intent intent = new Intent(context.getApplicationContext(),HosMap.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("hospitalname",name);
                 intent.putExtra("hospitaladdress",address);
                 intent.putExtra("latitude",lat);
                 intent.putExtra("longitude",lon);
                 intent.putExtra("tel",tel);
-                intent.putExtra("onoff",onoff);
                 context.getApplicationContext().startActivity(intent);
 
             }
@@ -79,7 +79,6 @@ public class HosAdapter extends RecyclerView.Adapter<HosAdapter.ViewHolder> {
     }
     public void addItem(Hospital hos){
         info.add(hos);
-        notifyDataSetChanged();
     }
     public void removeAllItem(){
         info.clear();

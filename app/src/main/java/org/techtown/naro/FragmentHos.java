@@ -11,11 +11,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +30,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -36,6 +38,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,13 +50,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Handler;
 
-public class FragmentHos extends Fragment implements OnMapReadyCallback {
+
+public class FragmentHos extends Fragment{
 
 
     public SQLiteDatabase database;
     HospitalDB helper;
-    String DBname = "myhos";
+    String DBname = "myhospital";
     public Cursor cursor;
     Double latitude;
     Double longitude;
@@ -57,6 +66,22 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
     RecyclerView recyclerView;
     Location location;
     List<Hospital> dataList;
+    TextView noDataText;
+    double wantdist;
+
+    //네이버에서 실시간으로 정보가져오는변수
+    String baseUrl = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=";
+    String seoul = "서울";
+    final Bundle bundle = new Bundle();
+    String searchname;
+    String msg;
+    String name;
+    Handler handler;
+    Boolean isEmpty;
+    ArrayList<String> ING;
+
+
+
 
 
     private MapView mapView = null;
@@ -67,6 +92,7 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
 
     //현재위치 가져오기 위한 변수들
     private GpsTracker gpsTracker;
+
     private static final int GPS_ENABLE_REQUEST_CODE =2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private static final String[] PERMISSIONS = {
@@ -96,17 +122,14 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
         helper = new HospitalDB(getActivity());
         database = helper.getWritableDatabase();
 
-        mapView = (MapView) rootView.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
-        mapView.getMapAsync(this); //지도 객체를 얻는것, 함수가 자동으로 호출되면서 매개변수로 naverMap 객체가 전달됨
-
         recyclerView = rootView.findViewById(R.id.recycleview2);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new HosAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),1));
+        //외부db copy
         setDB(getActivity());
+
 
         if(!checkLocationServicesStatus()){
             showDialogForLocationServiceSetting();
@@ -117,24 +140,11 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
         gpsTracker = new GpsTracker(getActivity());
         latitude = gpsTracker.getLatitude();
         longitude = gpsTracker.getLongitude();
-        check(37.5464750,126.9646916);
-        Toast.makeText(getActivity().getApplicationContext(),latitude+","+longitude,Toast.LENGTH_SHORT).show();
 
-
+        check(37.546364,126.9648311,1);
         return rootView;
     }
 
-    //카메라 줌이나 이동은 여기에 구현해주기
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        LatLng current = new LatLng(latitude,longitude);
-        googleMap.addMarker(new MarkerOptions().position(current).title("현재위치"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current,3));
-
-
-
-
-    }
     //permission에 대한 메소드
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -227,50 +237,7 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    //퍼미션 허락받기기
-    @Override
-    public void onStop() {
-        super.onStop();
-        mapView.onStop();
 
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mapView.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
 
 
     //외부db 사용하기 위한 메소드들
@@ -308,6 +275,8 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
         }
 
     }
+
+
     public boolean isCheckDB(){
         String filePath = "/data/data/org.techtown.naro/databases/pethospital.db";
         File file = new File(filePath);
@@ -326,26 +295,25 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
         String folderPath = "/data/data/org.techtown.naro/databases";
 
     }
-
-
-    public void check(double latitude, double longitude){
+    public void check(double latitude, double longitude,double distance){
         adapter.removeAllItem();
-        Cursor cursor = database.rawQuery("select name, tel, onoff, place1, Latitude,Longitude from myhos",null);
+        Cursor cursor = database.rawQuery("select name, tel, onoff, place1, Latitude,Longitude from myhospital",null);
         cursor.moveToFirst();
 
         int count=0;
         while(cursor.moveToNext()){
-            Hospital hospital = new Hospital();
             Double lat = cursor.getDouble(4);
             Double lan = cursor.getDouble(5);
             String tel = cursor.getString(1);
-            if(distance(latitude,longitude,lat,lan,"kilometer") <= 1){
+            Hospital hospital = new Hospital();
+            wantdist =distance(latitude,longitude,lat,lan,"kilometer");
+            if(wantdist <= distance){
                 hospital.setHosname(cursor.getString(0));
-                hospital.setHosonoff(cursor.getString(2));
                 hospital.setTel(tel);
                 hospital.setHoslatitude(lat);
                 hospital.setHoslongitude(lan);
                 hospital.setHosaddress(cursor.getString(3));
+                hospital.setHosonoff(String.format("%.2f",wantdist)+"km");
                 adapter.addItem(hospital);
                 count++;
             }
@@ -354,6 +322,7 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
         cursor.close();
 
     }
+
 
     //거리 계산메소드
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
@@ -383,6 +352,11 @@ public class FragmentHos extends Fragment implements OnMapReadyCallback {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
+
+
+
+
+
 
 }
 

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -28,6 +29,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class HosMap extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap googleMap;
     Double latitude;
@@ -35,11 +44,13 @@ public class HosMap extends AppCompatActivity implements OnMapReadyCallback {
     TextView name;
     TextView tel;
     TextView location;
-    TextView onoff;
+
     LatLng choose;
     String getname;
     Double latchoose;
     Double lonchoose;
+    String baseUrl = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=";
+    String seoul = "서울";
 
 
     //현재위치 가져오기위한 변수
@@ -72,7 +83,7 @@ public class HosMap extends AppCompatActivity implements OnMapReadyCallback {
         name = findViewById(R.id.more_name);
         tel = findViewById(R.id.more_tel);
         location = findViewById(R.id.more_address);
-        onoff = findViewById(R.id.more_onoff);
+
 
         getname = getIntent().getStringExtra("hospitalname");
         String gettel = getIntent().getStringExtra("tel");
@@ -80,9 +91,10 @@ public class HosMap extends AppCompatActivity implements OnMapReadyCallback {
         String getonoff = getIntent().getStringExtra("onoff");
         latchoose = getIntent().getDoubleExtra("latitude",0);
         lonchoose = getIntent().getDoubleExtra("longitude",0);
+        Test test = new Test();
+        test.execute();
         name.setText(getname);
         tel.setText(gettel);
-        onoff.setText(getonoff);
         location.setText(getaddress);
 
     }
@@ -189,8 +201,43 @@ public class HosMap extends AppCompatActivity implements OnMapReadyCallback {
 
         LatLng choose = new LatLng(latchoose,lonchoose);
         googleMap.addMarker(new MarkerOptions().position(choose).title(getname));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(choose,10));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(choose,15));
 
 
+    }
+    private class Test extends AsyncTask<Void, Void, Void> {
+        TextView onoff;
+        ArrayList<String> tt = new ArrayList<>();
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                onoff = findViewById(R.id.more_onoff);
+                Document doc = Jsoup.connect(baseUrl + seoul + getname).get();
+                Elements title = doc.select("._1mAZf");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Element element : title) {
+                            tt.add(element.text());
+                        }
+                        if (tt.size() == 0) {
+                            tt.add("0");
+                            tt.add("0");
+                            tt.add("전화로 문의하세요");
+                        }
+                        if (tt.size()==2){
+                            tt.add("전화로 문의하세요");
+                        }
+                        onoff.setText(tt.get(2));
+
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }
