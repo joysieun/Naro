@@ -49,6 +49,9 @@
         <activity android:name="org.techtown.naro.HosMap"
             android:exported="false"
             android:parentActivityName="org.techtown.naro.MainActivity"/>
+        <activity android:name="org.techtown.naro.DogInfodetail"
+            android:exported="false"
+            android:parentActivityName="org.techtown.naro.MainActivity"/>
 
 
         <provider android:name="androidx.core.content.FileProvider"

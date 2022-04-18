@@ -19,31 +19,59 @@
         android:layout_gravity="center_vertical"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_margin="50dp"
         android:padding="40dp"
         android:paddingTop="40dp"
         android:background="@drawable/layout_background">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="50dp"
+            android:textColor="#C31003"
+            android:layout_height="wrap_content"
+            android:text="*필수"
+            android:textSize="10sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="강아지 프로필 사진"
+            android:layout_marginBottom="5dp"/>
+
         <ImageView
+            android:adjustViewBounds="true"
             android:id="@+id/pet_face"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_baseline_home_24"
-            />
+            android:layout_width="106dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="110dp"
+            android:background="@drawable/layout_background"
+            android:src="@drawable/plus" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_gravity="left"
+            android:textColor="#C31003"
+            android:layout_height="wrap_content"
+            android:text="*필수"
+            android:textSize="10sp"/>
+
         <LinearLayout
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="이름 :"/>
             <EditText
+                android:hint=""
+                android:textSize="14sp"
                 android:id="@+id/dog_name"
-                android:hint="강아지 이름 또는 애칭"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content" />
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -56,7 +84,8 @@
 
                 android:text="성별 :"/>
             <EditText
-                android:hint="남/여"
+                android:hint="ex) 남/여"
+                android:textSize="14sp"
                 android:id="@+id/dog_sex"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content" />
@@ -64,7 +93,6 @@
 
         <LinearLayout
             android:layout_marginTop="7dp"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -74,7 +102,8 @@
             <EditText
                 android:id="@+id/dog_age"
                 android:layout_width="250dp"
-                android:hint="숫자만 적어주세요"
+                android:textSize="14sp"
+                android:hint="ex) 3"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
@@ -90,14 +119,11 @@
             <EditText
                 android:id="@+id/dog_birth"
                 android:layout_width="250dp"
-                android:hint="mm-dd형식으로 ex) 05-04"
+                android:hint="ex) 05-04"
+                android:textSize="14sp"
                 android:layout_height="wrap_content"
                 />
         </LinearLayout>
-
-
-
-
 
     </LinearLayout>
     <Button

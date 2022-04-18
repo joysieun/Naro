@@ -67,4 +67,17 @@ public class DogDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM User_dog WHERE userid='" + userid + "'; ");
     }
+
+    public void updateData(String owner, String name, String age, String sex, String birth, byte[] image){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_PET_NAME,name);
+        cv.put(COLUMN_PET_AGE,age);
+        cv.put(COLUMN_PET_SEX,sex);
+        cv.put(COLUMN_PET_BIRTH,birth);
+        cv.put(COLUMN_PET_FACE,image);
+        long result = sqLiteDatabase.update(TABLE_NAME,cv, "userid=?",new String[]{owner});
+
+    }
 }
