@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.techtown.naro">
-    <uses-feature android:name="android.hardware.camera"
-        android:required="true"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-feature android:name ="android.hardware.camera" android:required="true"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -18,11 +25,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCmIhcmfiNR1aRWaUCurxCdb1rnUMHDYLY"/>
+            android:value="AIzaSyCmIhcmfiNR1aRWaUCurxCdb1rnUMHDYLY" />
+
         <activity
-            android:name="org.techtown.naro.Loading"
+            android:name=".Loading"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,33 +39,96 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.techtown.naro.GoogleLogin"
+        <activity
+            android:name=".GoogleLogin"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.Loading"/>
-        <activity android:name="org.techtown.naro.DogInfo"
+            android:parentActivityName=".Loading" />
+        <activity
+            android:name=".DogInfo"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.MainActivity"/>
-        <activity android:name="org.techtown.naro.MainActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.GoogleLogin"/>
+            android:parentActivityName=".GoogleLogin" />
+        <activity
+            android:name=".Camera"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Care"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".HosMap"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".DogInfodetail"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ResultPage"
+            android:exported="false"
+            android:parentActivityName=".Camera" />
+        <activity
+            android:name=".Question1"
+            android:exported="false"
+            android:parentActivityName=".ResultPage" />
+        <activity
+            android:name=".Question2"
+            android:exported="false"
+            android:parentActivityName=".Question1" />
+        <activity
+            android:name=".Question3"
+            android:exported="false"
+            android:parentActivityName=".Question2" />
+        <activity
+            android:name=".Question4"
+            android:exported="false"
+            android:parentActivityName=".Question3" />
+        <activity
+            android:name=".Question5"
+            android:exported="false"
+            android:parentActivityName=".Question4" />
 
-        <activity android:name="org.techtown.naro.Camera"
+        <activity
+            android:name=".QuestionResult"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.MainActivity"/>
-        <activity android:name="org.techtown.naro.Care"
+            android:parentActivityName=".Question5" />
+
+        <activity
+            android:name=".NormalPage"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.MainActivity"/>
-        <activity android:name="org.techtown.naro.HosMap"
+            android:parentActivityName=".Camera" />
+        <activity
+            android:name=".MypageResult"
             android:exported="false"
-            android:parentActivityName="org.techtown.naro.MainActivity"/>
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".MemoPlus"
+            android:exported="false"
+            android:parentActivityName=".MypageResult" />
+        <activity
+            android:name=".Vacci"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".MypageCheck"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
 
 
-        <provider android:name="androidx.core.content.FileProvider"
+        <provider
+            android:name="androidx.core.content.FileProvider"
             android:authorities="org.techtown.naro.fileprovider"
-            android:exported="false" android:grantUriPermissions="true">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" /> </provider>
-
-
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

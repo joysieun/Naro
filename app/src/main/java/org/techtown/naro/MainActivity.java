@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -132,7 +133,13 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-
+        btn_modify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), DogInfodetail.class);
+                startActivity(intent);
+            }
+        });
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser googleuser = firebaseAuth.getCurrentUser();
@@ -142,6 +149,7 @@ public class MainActivity extends AppCompatActivity  {
         dogDB = new DogDB(MainActivity.this,"Dog.db",null,2);
         Dog dog = new Dog();
         settingdoginfo(dog);
+
 
 
 

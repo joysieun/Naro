@@ -6,7 +6,16 @@
     android:id="@+id/map_layout"
     android:orientation="vertical"
     tools:context=".FragmentHos">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingTop="10dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:background="#D6E4EF"
+        android:paddingLeft="10dp"
+        android:text="현재위치 주변 동물병원"
+        android:textColor="#000000"
+        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleview2"
@@ -14,10 +23,7 @@
         android:layout_height="260dp"
         android:layout_weight="1" />
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="260dp" />
+
 
 
 </LinearLayout>
